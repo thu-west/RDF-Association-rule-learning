@@ -1,0 +1,3 @@
+http://www.tsinghua-west.com/Guxi/instance/minzu-汉族,http://www.tsinghua-west.com/Guxi/instance/guoji-中国
+http://www.tsinghua-west.com/Guxi/Patient/(.*?),http://www.tsinghua-west.com/Guxi/times/(.*?),http://www.tsinghua-west.com/Guxi/pte/(.*?)-住院手术报告
+1,-1

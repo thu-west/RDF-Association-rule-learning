@@ -1,0 +1,6 @@
+http://www.tsinghua-west.com/Guxi/instance/minzu-汉族,http://www.tsinghua-west.com/Guxi/instance/guoji-中国
+SELECT DISTINCT ?patient ?c
+       WHERE {
+          ?patient <http://www.tsinghua-west.com/Guxi/Pt> ?id .
+          ?c <http://www.tsinghua-west.com/Guxi/PTE#TLINK> ?id .
+       }
