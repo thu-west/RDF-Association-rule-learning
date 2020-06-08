@@ -1,6 +1,6 @@
 # *_*coding:utf-8 *_*
 
-from efficient_apriori import apriori
+from apriori import apriori
 import rdflib
 import os, re, time, sys
 import argparse
@@ -109,7 +109,7 @@ def match_sparql(g,sparql_query,dict_forward):
     return record
 
 
-def write_file(graphfile, record,dict_forward,dict_reverse):
+def write_file(graphfile, record,query_node,dict_reverse):
     itemfile = "path_itemsets.txt"
     rulesfile = "path_rules.txt"
     rulesdict_file= "path_rule_dict.text"
@@ -123,7 +123,7 @@ def write_file(graphfile, record,dict_forward,dict_reverse):
     rulesfile_write = open(rulesfile, 'a', encoding='utf-8')
 
     print(len(record))
-    itemsets, rules = apriori(record, min_support=0.5, min_confidence=0.9)
+    itemsets, rules = apriori(record,query_node=query_node, min_support=0.5, min_confidence=0.9)
     for (key, value) in itemsets.items():
         itemset = []
         for item_tuple in value.keys():
@@ -169,8 +169,9 @@ def write_file(graphfile, record,dict_forward,dict_reverse):
             outfile.write("]\n")
     return rule_dict
 def get_query_node_result(query_node,rule_dict,dict_reverse):
-    rule_set=set(rule_dict[query_node[0]])
+    rule_set=set(rule_dict[dict_reverse[query_node[0]]])
     for node in query_node[1:]:
+        node=dict_reverse[node]
         rule_set=rule_set.intersection(rule_dict[node])
     with open("query_result.txt",'w',encoding='utf8') as outfile:
         for rule in rule_set:
@@ -203,8 +204,30 @@ if __name__ == '__main__':
         match_result=match_path(g,path,path1,dict_forward)
         end_time=time.time()
         print('time cost : %.5f sec' %(end_time-start_time))
-        rule_dict=write_file(g,match_result,dict_forward,dict_reverse)
+
+        for i in range(len(query_node)):
+            query_node[i]=dict_forward[query_node[i]]
+
+        rule_dict=write_file(g,match_result,query_node,dict_reverse)
         get_query_node_result(query_node,rule_dict,dict_reverse)
+
+        '''
+        ap = apriori_me.Apriori(match_result,nodeSet=query_node, minSupport=0.5, minConf=0.9)
+        print(ap.resultConf)
+        print(ap.resultSupport)
+        
+        result_rule={}
+        for item in ap.resultConf:
+            item_list=apriori_me.str2itemsets[item]
+            for item
+            result_rule.setdefault(dict_reverse[item])
+            new_list=[]
+            for iitem in ap.resultConf[item]:
+                new_list.append(dict_reverse[iitem])
+            result_rule[dict_reverse[item]].setdefault(new_list,
+                                                     ap.resultConf[])
+        
+        '''
         end_time=time.time()
         print('time cost : %.5f sec' %(end_time-start_time))
     else:
@@ -218,7 +241,14 @@ if __name__ == '__main__':
         match_result=match_sparql(g,sparql_query,dict_forward)
         end_time=time.time()
         print('time cost : %.5f sec' %(end_time-start_time))
-        rule_dict=write_file(g,match_result,dict_forward,dict_reverse)
+        for i in range(len(query_node)):
+            query_node[i]=dict_forward[query_node[i]]
+        '''
+        ap = apriori_me.Apriori(match_result,nodeSet=query_node, minSupport=0.5, minConf=0.9)
+        print(ap.resultConf)
+        print(ap.resultSupport)
+        '''
+        rule_dict=write_file(g,match_result,query_node,dict_reverse)
         get_query_node_result(query_node,rule_dict,dict_reverse)
         end_time=time.time()
         print('time cost : %.5f sec' %(end_time-start_time))
